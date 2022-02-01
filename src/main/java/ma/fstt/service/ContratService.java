@@ -7,13 +7,18 @@ import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tuples.generated.Tuple7;
 import org.web3j.tuples.generated.Tuple8;
 import org.web3j.tx.ClientTransactionManager;
 import org.web3j.tx.TransactionManager;
+import org.web3j.tx.Transfer;
+import org.web3j.utils.Convert;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 
 @Slf4j
 @Service
@@ -26,11 +31,12 @@ public class ContratService {
 
     private final static BigInteger GAS_LIMIT = BigInteger.valueOf(6721975);
     private final static BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
-    String privatekey = "1aae372add4ea4e85fa779d90bdef88e1e2f4406d55421e71a3d31a5b57fd112";
+    String privatekey = "3db16e53de936437e8e5546102f2a56bfb4f0373f59e1b2887d25195d852c6ca";
     BigInteger privkey = new BigInteger(privatekey, 16);
     ECKeyPair ecKeyPair = ECKeyPair.create(privkey);
     Credentials credentials = Credentials.create(ecKeyPair);
     TransactionManager transactionManager =new ClientTransactionManager(web3j , "d2601389278084ab26c608563dfb89f6063ed4d13822e607ab1ed7e3e4710290");
+
     //Deploy contrat
     public String deployContrat(){
         try {
@@ -41,11 +47,15 @@ public class ContratService {
         }
         return this.CONTRACT_ADDRESS;
     }
+
+
     //Add Immobilier and sell
     public void sellImmobilier(String _name, String _description,String _localisation, BigInteger _price , BigInteger _surface) throws Exception {
+
         this.contrat1 = Src_main_resources_solidity_MarketPlace_sol_MarketPlace.load(CONTRACT_ADDRESS,web3j,credentials,GAS_PRICE,GAS_LIMIT);
         this.contrat1.sellImmobilier(_name,_description,_localisation,_price,_surface).send();
     }
+
 
     //Afficher le nombre des articles
     public void afficherNombreImmobilier(){
@@ -57,6 +67,20 @@ public class ContratService {
         }
     }
 
+    //Get le nombre des articles
+    public int getNombreImmobilier(){
+        this.contrat1 = Src_main_resources_solidity_MarketPlace_sol_MarketPlace.load(CONTRACT_ADDRESS,web3j,credentials,GAS_PRICE,GAS_LIMIT);
+        try {
+            log.warn("Nombre des articles   : "+this.contrat1.getNumberOfArticles().send());
+            return this.contrat1.getNumberOfArticles().send().intValue();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+
+    }
+
+    //Get un immobilier
     public Immobilier getImmobilier(long id){
         Immobilier imm = new Immobilier();
         this.contrat1 = Src_main_resources_solidity_MarketPlace_sol_MarketPlace.load(CONTRACT_ADDRESS,web3j,credentials,GAS_PRICE,GAS_LIMIT);
@@ -66,7 +90,7 @@ public class ContratService {
             imm.setName((String) tp.component4());
             imm.setDescription((String) tp.component5());
             imm.setLocalisation((String) tp.component6());
-            imm.setOwnerAddress((String) tp.component3());
+            imm.setOwnerAddress((String) tp.component2());
             imm.setPrice((BigInteger) tp.component7());
             imm.setSurface((BigInteger) tp.component8());
         }catch (Exception e) {
@@ -76,9 +100,31 @@ public class ContratService {
 
     }
 
+    //Acheter un immobiler
     public void buyImmobilier(long id) throws Exception {
         this.contrat1 = Src_main_resources_solidity_MarketPlace_sol_MarketPlace.load(CONTRACT_ADDRESS,web3j,credentials,GAS_PRICE,GAS_LIMIT);
         this.contrat1.buyArticle(BigInteger.valueOf(id)).send();
+
+
+        /*
+        TransactionReceipt transactionReceipt = Transfer.sendFunds(
+                web3j, credentials, "0x698D1104497494659dbE703304f0Acb650679E0C",
+                BigDecimal.valueOf(1.0), Convert.Unit.ETHER).send();
+        */
+    }
+
+    //Get tous les articles
+    public ArrayList<Immobilier> getAllImmobilier (){
+        this.contrat1 = Src_main_resources_solidity_MarketPlace_sol_MarketPlace.load(CONTRACT_ADDRESS,web3j,credentials,GAS_PRICE,GAS_LIMIT);
+        ArrayList<Immobilier> immobiliers = new ArrayList<Immobilier>();
+        try {
+            for(int i= this.contrat1.getNumberOfArticles().send().intValue();i>0;i--){
+                immobiliers.add(getImmobilier(i));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  immobiliers ;
     }
 
 

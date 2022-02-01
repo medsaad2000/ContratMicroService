@@ -5,6 +5,7 @@ import ma.fstt.contracts.Src_main_resources_solidity_MarketPlace_sol_MarketPlace
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.protocol.Web3j;
@@ -13,6 +14,7 @@ import org.web3j.protocol.http.HttpService;
 import java.math.BigInteger;
 
 @SpringBootApplication @Slf4j
+@EnableFeignClients
 public class ContratMicroServiceApplication implements CommandLineRunner {
     //    Declare GAS Limit From Ganache :
     private final static BigInteger GAS_LIMIT = BigInteger.valueOf(6721975);
