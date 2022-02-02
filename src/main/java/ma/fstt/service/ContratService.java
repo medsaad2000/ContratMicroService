@@ -31,10 +31,10 @@ public class ContratService {
 
     private final static BigInteger GAS_LIMIT = BigInteger.valueOf(6721975);
     private final static BigInteger GAS_PRICE = BigInteger.valueOf(20000000000L);
-    String privatekey = "3db16e53de936437e8e5546102f2a56bfb4f0373f59e1b2887d25195d852c6ca";
-    BigInteger privkey = new BigInteger(privatekey, 16);
-    ECKeyPair ecKeyPair = ECKeyPair.create(privkey);
-    Credentials credentials = Credentials.create(ecKeyPair);
+    String privatekey = "e328d7cfb7fc7d74c43778e8455c1c6f037522d2e4553762dea4f579a85f1657";
+   BigInteger privkey = new BigInteger(privatekey, 16);
+   ECKeyPair ecKeyPair = ECKeyPair.create(privkey);
+   Credentials credentials = Credentials.create(ecKeyPair);
     TransactionManager transactionManager =new ClientTransactionManager(web3j , "d2601389278084ab26c608563dfb89f6063ed4d13822e607ab1ed7e3e4710290");
 
     //Deploy contrat
@@ -50,8 +50,10 @@ public class ContratService {
 
 
     //Add Immobilier and sell
-    public void sellImmobilier(String _name, String _description,String _localisation, BigInteger _price , BigInteger _surface) throws Exception {
-
+    public void sellImmobilier(String _name, String _description,String _localisation, BigInteger _price , BigInteger _surface , String privateKey1) throws Exception {
+        BigInteger privkey = new BigInteger(privateKey1, 16);
+        ECKeyPair ecKeyPair = ECKeyPair.create(privkey);
+        Credentials credentials = Credentials.create(ecKeyPair);
         this.contrat1 = Src_main_resources_solidity_MarketPlace_sol_MarketPlace.load(CONTRACT_ADDRESS,web3j,credentials,GAS_PRICE,GAS_LIMIT);
         this.contrat1.sellImmobilier(_name,_description,_localisation,_price,_surface).send();
     }

@@ -1,6 +1,7 @@
 package ma.fstt.controller;
 
 import ma.fstt.entity.Annonce;
+import ma.fstt.entity.AnnonceKey;
 import ma.fstt.entity.Immobilier;
 import ma.fstt.service.AnnonceService;
 import ma.fstt.service.ContratService;
@@ -21,29 +22,29 @@ public class ContratController {
     @Autowired
     AnnonceService as ;
 //Pour Ajouter un immobilier en utilisant request parametre
-    @PostMapping("/sellArticle")
-    public String sellArticle(@RequestParam String name , @RequestParam String description,@RequestParam String localisation ,@RequestParam long price , @RequestParam long surface ){
-        try {
-            cs.sellImmobilier(name , description ,localisation, BigInteger.valueOf(price), BigInteger.valueOf(surface));
-            System.out.println("Article posted");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "Article Posted ";
-    }
+//    @PostMapping("/sellArticle")
+//    public String sellArticle(@RequestParam String name , @RequestParam String description,@RequestParam String localisation ,@RequestParam long price , @RequestParam long surface ){
+//        try {
+//            cs.sellImmobilier(name , description ,localisation, BigInteger.valueOf(price), BigInteger.valueOf(surface));
+//            System.out.println("Article posted");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return "Article Posted ";
+   // }
     //Pour Ajouter un immobilier en utilisant request body
     @PostMapping("/sellArticleee")
-    public Immobilier sellArticleee(@RequestBody Immobilier immobilier){
-        Annonce annonce = new Annonce(null,immobilier.getName(),"http://test/studio",immobilier.getDescription(),immobilier.getPrice().doubleValue());
+    public Immobilier sellArticleee(@RequestBody AnnonceKey annonceKey){
+        Annonce annonce = new Annonce(null,annonceKey.getImmobilier().getName(),"http://test/studio",annonceKey.getImmobilier().getDescription(),annonceKey.getImmobilier().getPrice().doubleValue());
         try {
 
-            cs.sellImmobilier(immobilier.getName(), immobilier.getDescription(), immobilier.getLocalisation(), immobilier.getPrice(), immobilier.getSurface());
+            cs.sellImmobilier(annonceKey.getImmobilier().getName(), annonceKey.getImmobilier().getDescription(), annonceKey.getImmobilier().getLocalisation(), annonceKey.getImmobilier().getPrice(), annonceKey.getImmobilier().getSurface(),annonceKey.getPrivateKey());
             as.addAnnonceC(annonce);
             System.out.println("Article posted");
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return immobilier;
+        return annonceKey.getImmobilier();
     }
 //Get un immobilier
     @PostMapping("/getarticle")
