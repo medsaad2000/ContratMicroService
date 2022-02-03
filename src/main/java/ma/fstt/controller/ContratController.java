@@ -2,6 +2,7 @@ package ma.fstt.controller;
 
 import ma.fstt.entity.Annonce;
 import ma.fstt.entity.AnnonceKey;
+import ma.fstt.entity.Categorie;
 import ma.fstt.entity.Immobilier;
 import ma.fstt.service.AnnonceService;
 import ma.fstt.service.ContratService;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 @RestController
@@ -21,6 +21,7 @@ public class ContratController {
     ContratService cs;
     @Autowired
     AnnonceService as ;
+
 //Pour Ajouter un immobilier en utilisant request parametre
 //    @PostMapping("/sellArticle")
 //    public String sellArticle(@RequestParam String name , @RequestParam String description,@RequestParam String localisation ,@RequestParam long price , @RequestParam long surface ){
@@ -33,9 +34,10 @@ public class ContratController {
 //        return "Article Posted ";
    // }
     //Pour Ajouter un immobilier en utilisant request body
-    @PostMapping("/sellArticleee")
-    public Immobilier sellArticleee(@RequestBody AnnonceKey annonceKey){
-        Annonce annonce = new Annonce(null,annonceKey.getImmobilier().getName(),"http://test/studio",annonceKey.getImmobilier().getDescription(),annonceKey.getImmobilier().getPrice().doubleValue());
+    @PostMapping("/sellArticleee/{id}")
+    public Immobilier sellArticleee(@RequestBody AnnonceKey annonceKey,@PathVariable String id){
+        Categorie cat = as.getCategorieById(id);
+        Annonce annonce = new Annonce(null,annonceKey.getImmobilier().getName(),"http://test/studio",annonceKey.getImmobilier().getDescription(),annonceKey.getImmobilier().getPrice().doubleValue(),cat);
         try {
 
             cs.sellImmobilier(annonceKey.getImmobilier().getName(), annonceKey.getImmobilier().getDescription(), annonceKey.getImmobilier().getLocalisation(), annonceKey.getImmobilier().getPrice(), annonceKey.getImmobilier().getSurface(),annonceKey.getPrivateKey());
