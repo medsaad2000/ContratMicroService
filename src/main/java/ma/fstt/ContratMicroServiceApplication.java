@@ -6,6 +6,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.web3j.crypto.Credentials;
 import org.web3j.crypto.ECKeyPair;
 import org.web3j.protocol.Web3j;
@@ -15,6 +19,7 @@ import java.math.BigInteger;
 
 @SpringBootApplication @Slf4j
 @EnableFeignClients
+@CrossOrigin(origins = "*")
 public class ContratMicroServiceApplication implements CommandLineRunner {
     //    Declare GAS Limit From Ganache :
     private final static BigInteger GAS_LIMIT = BigInteger.valueOf(6721975);
@@ -44,4 +49,16 @@ public class ContratMicroServiceApplication implements CommandLineRunner {
 
 
     }
+
+    @Bean
+    public WebMvcConfigurer configure(){
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry){
+                registry.addMapping("/*").allowedOrigins("http://localhost:4200");
+            }
+        };
+    }
+
 }
+

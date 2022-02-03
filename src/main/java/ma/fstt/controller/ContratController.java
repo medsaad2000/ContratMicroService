@@ -8,13 +8,15 @@ import ma.fstt.service.AnnonceService;
 import ma.fstt.service.ContratService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/contrat")
-@CrossOrigin(origins = {"http://localhost:4200"})
 @EnableFeignClients
 public class ContratController {
     @Autowired
@@ -34,8 +36,10 @@ public class ContratController {
 //        return "Article Posted ";
    // }
     //Pour Ajouter un immobilier en utilisant request body
+    //@CrossOrigin(origins = "http://localhost:4200/contrat")
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/sellArticleee/{id}")
-    public Immobilier sellArticleee(@RequestBody AnnonceKey annonceKey,@PathVariable String id){
+    public ResponseEntity<AnnonceKey> sellArticleee(@RequestBody AnnonceKey annonceKey, @PathVariable String id){
         Categorie cat = as.getCategorieById(id);
         Annonce annonce = new Annonce(null,annonceKey.getImmobilier().getName(),"http://test/studio",annonceKey.getImmobilier().getDescription(),annonceKey.getImmobilier().getPrice().doubleValue(),cat);
         try {
@@ -46,7 +50,7 @@ public class ContratController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return annonceKey.getImmobilier();
+        return new ResponseEntity<>(annonceKey, HttpStatus.CREATED);
     }
 //Get un immobilier
     @PostMapping("/getarticle")
