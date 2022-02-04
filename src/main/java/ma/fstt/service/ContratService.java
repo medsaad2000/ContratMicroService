@@ -56,6 +56,7 @@ public class ContratService {
         Credentials credentials = Credentials.create(ecKeyPair);
         this.contrat1 = Src_main_resources_solidity_MarketPlace_sol_MarketPlace.load(CONTRACT_ADDRESS,web3j,credentials,GAS_PRICE,GAS_LIMIT);
         this.contrat1.sellImmobilier(_name,_description,_localisation,_price,_surface).send();
+
     }
 
 

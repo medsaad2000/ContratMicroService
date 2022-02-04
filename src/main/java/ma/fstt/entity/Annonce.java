@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.math.BigInteger;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -15,9 +16,9 @@ import java.math.BigInteger;
 public class Annonce {
     @Id
     private BigInteger id;
-
+    private BigInteger idImm ;
     private String titre_anc;
-    //private Date date_anc;
+    private Date date_anc;
     private String url_img;
     private String description;
     private double prix_anc;
