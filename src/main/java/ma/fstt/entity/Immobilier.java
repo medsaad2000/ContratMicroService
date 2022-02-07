@@ -5,6 +5,7 @@ import java.math.BigInteger;
 public class Immobilier {
         BigInteger id ;
         String ownerAddress ;
+        String buyerAddress ;
         String name;
         String description;
         String localisation;
@@ -87,5 +88,13 @@ public class Immobilier {
 
     public void setLocalisation(String localisation) {
         this.localisation = localisation;
+    }
+
+    public String getBuyerAddress() {
+        return buyerAddress;
+    }
+
+    public void setBuyerAddress(String buyerAddress) {
+        this.buyerAddress = buyerAddress;
     }
 }

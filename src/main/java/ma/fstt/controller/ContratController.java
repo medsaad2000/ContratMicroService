@@ -1,9 +1,6 @@
 package ma.fstt.controller;
 
-import ma.fstt.entity.Annonce;
-import ma.fstt.entity.AnnonceKey;
-import ma.fstt.entity.Categorie;
-import ma.fstt.entity.Immobilier;
+import ma.fstt.entity.*;
 import ma.fstt.service.AnnonceService;
 import ma.fstt.service.ContratService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +23,6 @@ public class ContratController {
     @Autowired
     AnnonceService as ;
 
-//Pour Ajouter un immobilier en utilisant request parametre
-//    @PostMapping("/sellArticle")
-//    public String sellArticle(@RequestParam String name , @RequestParam String description,@RequestParam String localisation ,@RequestParam long price , @RequestParam long surface ){
-//        try {
-//            cs.sellImmobilier(name , description ,localisation, BigInteger.valueOf(price), BigInteger.valueOf(surface));
-//            System.out.println("Article posted");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return "Article Posted ";
-   // }
     //Pour Ajouter un immobilier en utilisant request body
     //@CrossOrigin(origins = "http://localhost:4200/contrat")
     @CrossOrigin(origins = "http://localhost:4200")
@@ -47,7 +33,7 @@ public class ContratController {
         try {
             int i = cs.getNombreImmobilier() +1;
             cs.sellImmobilier(annonceKey.getImmobilier().getName(), annonceKey.getImmobilier().getDescription(), annonceKey.getImmobilier().getLocalisation(), annonceKey.getImmobilier().getPrice(), annonceKey.getImmobilier().getSurface(),annonceKey.getPrivateKey());
-            Annonce annonce = new Annonce(null, BigInteger.valueOf(i),annonceKey.getImmobilier().getName(),new Date(),"http://test/studio",annonceKey.getImmobilier().getDescription(),annonceKey.getImmobilier().getPrice().doubleValue(),cat);
+            Annonce annonce = new Annonce(null, BigInteger.valueOf(i),annonceKey.getImmobilier().getName(),new Date(),"https://shortest.link/2Mtb",annonceKey.getImmobilier().getDescription(),annonceKey.getImmobilier().getPrice().doubleValue(),cat);
             as.addAnnonceC(annonce);
             System.out.println("Article posted"+annonceKey.getImmobilier().getId());
         } catch (Exception e) {
@@ -55,30 +41,32 @@ public class ContratController {
         }
         return new ResponseEntity<>(annonceKey, HttpStatus.CREATED);
     }
-//Get un immobilier
-    @PostMapping("/getarticle")
-    public Immobilier getArticles(@RequestParam long id) {
 
-        return cs.getImmobilier(id);
-    }
-//Get un immobilier
+//Get un immobilier par son Id
     @GetMapping("/getarticleee/{id}")
     public Immobilier getArticleeees(@PathVariable long id) {
 
         return cs.getImmobilier(id);
     }
 //Acheter un immobilier
-    @PostMapping("/buyarticle")
-    public String buyArticle(@RequestParam long id) {
-        try {
-            cs.buyImmobilier(id);
-            System.out.println("Article Buyed");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return "Article Buyed";
+@PostMapping("/buyarticle/{id}")
+public ResponseEntity<PrivateKey> buyArticle(@PathVariable long id ,@RequestBody PrivateKey privateKey) {
+
+    try {
+        Immobilier imm = cs.getImmobilier(id);
+        cs.buyImmobilierWithTransfer(id, privateKey.getPrivateKey());
+        cs.transferEther(privateKey.getPrivateKey() , imm.getOwnerAddress() , imm.getPrice().intValue());
+        System.out.println("Article Buyed");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+
     }
-//Get le nombre des immobilier
+
+    return new ResponseEntity<>(privateKey, HttpStatus.CREATED);
+
+}
+//Get le nombre des immobiliers
     @GetMapping("/getnumarticle")
     public int getNumArticle(){
         try{

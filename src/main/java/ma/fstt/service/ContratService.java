@@ -94,6 +94,7 @@ public class ContratService {
             imm.setDescription((String) tp.component5());
             imm.setLocalisation((String) tp.component6());
             imm.setOwnerAddress((String) tp.component2());
+            imm.setBuyerAddress((String) tp.component3());
             imm.setPrice((BigInteger) tp.component7());
             imm.setSurface((BigInteger) tp.component8());
         }catch (Exception e) {
@@ -108,12 +109,14 @@ public class ContratService {
         this.contrat1 = Src_main_resources_solidity_MarketPlace_sol_MarketPlace.load(CONTRACT_ADDRESS,web3j,credentials,GAS_PRICE,GAS_LIMIT);
         this.contrat1.buyArticle(BigInteger.valueOf(id)).send();
 
+    }
 
-        /*
-        TransactionReceipt transactionReceipt = Transfer.sendFunds(
-                web3j, credentials, "0x698D1104497494659dbE703304f0Acb650679E0C",
-                BigDecimal.valueOf(1.0), Convert.Unit.ETHER).send();
-        */
+    public void buyImmobilierWithTransfer(long id , String privateKey1) throws Exception {
+        BigInteger privkey = new BigInteger(privateKey1, 16);
+        ECKeyPair ecKeyPair = ECKeyPair.create(privkey);
+        Credentials credentials1 = Credentials.create(ecKeyPair);
+        this.contrat1 = Src_main_resources_solidity_MarketPlace_sol_MarketPlace.load(CONTRACT_ADDRESS,web3j,credentials1,GAS_PRICE,GAS_LIMIT);
+        this.contrat1.buyArticle(BigInteger.valueOf(id)).send();
     }
 
     //Get tous les articles
@@ -128,6 +131,19 @@ public class ContratService {
             e.printStackTrace();
         }
         return  immobiliers ;
+    }
+
+    public void transferEther (String privateKeyBuyer , String addressOwner, int price){
+        BigInteger privkey = new BigInteger(privateKeyBuyer, 16);
+        ECKeyPair ecKeyPair = ECKeyPair.create(privkey);
+        Credentials credentialsBuyer = Credentials.create(ecKeyPair);
+        try {
+            TransactionReceipt transactionReceipt = Transfer.sendFunds(
+                    web3j, credentialsBuyer,addressOwner ,
+                    BigDecimal.valueOf(price,0), Convert.Unit.ETHER).send();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
