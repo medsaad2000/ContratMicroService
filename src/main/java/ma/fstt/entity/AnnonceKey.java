@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class AnnonceKey {
     private Immobilier immobilier ;
     private String privateKey ;
+    private String url ; 
 
 }

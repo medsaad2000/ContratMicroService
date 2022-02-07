@@ -33,7 +33,7 @@ public class ContratController {
         try {
             int i = cs.getNombreImmobilier() +1;
             cs.sellImmobilier(annonceKey.getImmobilier().getName(), annonceKey.getImmobilier().getDescription(), annonceKey.getImmobilier().getLocalisation(), annonceKey.getImmobilier().getPrice(), annonceKey.getImmobilier().getSurface(),annonceKey.getPrivateKey());
-            Annonce annonce = new Annonce(null, BigInteger.valueOf(i),annonceKey.getImmobilier().getName(),new Date(),"https://shortest.link/2Mtb",annonceKey.getImmobilier().getDescription(),annonceKey.getImmobilier().getPrice().doubleValue(),cat);
+            Annonce annonce = new Annonce(null, BigInteger.valueOf(i),annonceKey.getImmobilier().getName(),new Date(), annonceKey.getUrl(), annonceKey.getImmobilier().getDescription(),annonceKey.getImmobilier().getPrice().doubleValue(),cat);
             as.addAnnonceC(annonce);
             System.out.println("Article posted"+annonceKey.getImmobilier().getId());
         } catch (Exception e) {
